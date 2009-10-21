@@ -1,1 +1,5 @@
-# git svn clone -s SVN_REPO_URL LOCAL_DIR --authors-file=
+# $ git svn clone -s SVN_REPO_URL LOCAL_DIR --authors-file=authors # name it that and you'll be happy...
+# $ cd LOCAL_DIR
+# this copy and paste...
+# $ git remote add origin git@github.com:GITHUB_USERNAME/REPO_NAME.git
+# $ git push origin master
