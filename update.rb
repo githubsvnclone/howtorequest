@@ -7,9 +7,13 @@ for file in Dir['*.desc']
    if settings[:authors]
      command = "#{command} --authors-file #{settings[:authors]}"
    end
-   puts command
+   puts settings[:dir], command
    system(command)
    system("git push origin master")
+
+   # update tags by hand [sigh]
+   all = `git branch -a | grep tags`
+   all.each_line{|line| line =~ /\/(.....$)/; system("git push origin tags/#{$1}") }
  end
 
 end
