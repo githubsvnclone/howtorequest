@@ -1,6 +1,16 @@
 #!/usr/local/bin/ruby
 require 'fileutils'
 
+
+def finish_up command
+      puts command
+      system command
+      system("git push origin master")
+      # update tags by hand [sigh]
+      all = `git branch -a | grep tags`
+      all.each_line{|line| line =~ /\/(.....$)/; system("git push origin tags/#{$1}") }
+end
+
 Dir.chdir(File.dirname(__FILE__)) do
 
   for file in Dir['*.desc']
@@ -11,15 +21,19 @@ Dir.chdir(File.dirname(__FILE__)) do
       if settings[:authors]
         command = "#{command} --authors-file #{settings[:authors]}"
       end
-      puts settings[:dir], command
-      system(command)
-      system("git push origin master")
-
-      # update tags by hand [sigh]
-      all = `git branch -a | grep tags`
-      all.each_line{|line| line =~ /\/(.....$)/; system("git push origin tags/#{$1}") }
+      puts settings[:dir]
+      finish_up command
     end
 
   end
+
+  for normal in File.read('normals').split("\n")
+    Dir.chdir(normal) do
+      command = "git-svn rebase http://#{normal}.rubyforge.org/svn --authors-file ../authors"
+      puts command
+      finish_up command
+    end
+  end
+    
   FileUtils.touch '/home/githubsvnclone/hereiam2'
 end
